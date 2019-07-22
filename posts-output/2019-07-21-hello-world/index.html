@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>JGood: Tags</title>
+        <title>JGood: Hello World</title>
         <meta name="description" content="">
         <meta name="keywords" content="">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -56,14 +56,48 @@
 
         <article id="main">
             
-<div id="tags-page">
-    <div id="page-header">
-        <h1>Tags</h1>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta">
+        <h1>Hello World</h1>
+        <div class="byline">
+            <span class="date">July 21, 2019</span>
+            
+        </div>
     </div>
+</div>
+<div>
+    
+    <h1 id="workflow">Workflow</h1><pre><code class="clojure">&#40;defn export-md &#91;org&#93;
+  &#40;key-combo org &quot;, e e g G&quot;&#41;&#41;
 
-    <ul>
-        
-    </ul>
+&#40;defn write-to-md-content &#91;export-buffer&#93;
+  &#40;key-combo export-buffer &quot;:w ../md/$TYPE/$DATE$FILE&#95;NAME&quot;&#41;&#41;
+
+&#40;-&gt; org-post
+    export-md
+    write-to-md-content&#41;
+</code></pre>
+</div>
+
+<br/>
+
+
+    
+    <div id="prev-next">
+    
+    <div class="prev"></div>
+    
+    
+    <div class="next"></div>
+    
+</div>
+
+    
+
+    
+
+
 </div>
 
             <hr/>
