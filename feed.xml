@@ -1,1 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="jgood.io" rel="self" type="application/rss+xml"/><title>JGood</title><link>jgood.io</link><description>Personal blog</description><lastBuildDate>Sun, 26 Jan 2020 17:22:10 -0500</lastBuildDate><generator>clj-rss</generator><item><guid>jgood.io/posts-output/2020-01-26-expo-shadow-cljs-starter/</guid><link>jgood.io/posts-output/2020-01-26-expo-shadow-cljs-starter/</link><title>A template for Expo apps with Shadow CLJS</title><description>SummaryThis repo is a template for Expo projects using Shadow CLJS. By cloning this repo and following the starter instructions in the readme you will be all setup to starting making a cross platform native app using Clojure.</description><pubDate>Sun, 26 Jan 2020 00:00:00 -0500</pubDate></item><item><guid>jgood.io/posts-output/2019-07-21-hello-world/</guid><link>jgood.io/posts-output/2019-07-21-hello-world/</link><title>Hello World</title><description>(:</description><pubDate>Sun, 21 Jul 2019 00:00:00 -0400</pubDate></item></channel></rss>
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <atom:link href="jgood.io" rel="self" type="application/rss+xml" />
+        <title>JGood</title>
+        <link></link>
+        <description>Personal blog</description>
+        <lastBuildDate>Sun, 26 Jan 2020 17:22:10 -0500</lastBuildDate>
+        <generator>clj-rss</generator>
+        <item>
+            <guid>jgood.io/posts-output/2020-01-26-expo-shadow-cljs-starter/</guid>
+            <link>jgood.io/posts-output/2020-01-26-expo-shadow-cljs-starter/</link>
+            <title>A template for Expo apps with Shadow CLJS</title>
+            <description>SummaryThis repo is a template for Expo projects using Shadow CLJS. By cloning this repo and following the starter instructions in the readme you will be all setup to starting making a cross platform native app using Clojure.</description>
+            <pubDate>Sun, 26 Jan 2020 00:00:00 -0500</pubDate>
+        </item>
+        <item>
+            <guid>jgood.io/posts-output/2019-07-21-hello-world/</guid>
+            <link>jgood.io/posts-output/2019-07-21-hello-world/</link>
+            <title>Hello World</title>
+            <description>(:</description>
+            <pubDate>Sun, 21 Jul 2019 00:00:00 -0400</pubDate>
+        </item>
+    </channel>
+</rss>
