@@ -146,7 +146,7 @@ Install <a href="https://expo.io/tools#client">the Expo client app</a> if you do
           (fn [bucket old-period-map]
             ;; This is where we take all the template periods from the pattern and find the ones that should be applied to this bucket's periods
             )))))
-</code></pre><h3>CSK</h3><p><a href="https://clj-commons.org/camel-snake-kebab/">Camel-snake-kebab</a> is a nice little convenience. Reagent does a great job of converting component parameters from camel case to snake case for wrapped React components. There are some spots where you will want to use this library to do the same thing. In this example it is for the style sheets. In <code>src/main/new_project_name/app.cljs</code> you can see it's use to allow style properties to be referenced in camel case.</p><pre><code class="language-clojure">(def styles
+</code></pre><h3>CSK</h3><p><a href="https://clj-commons.org/camel-snake-kebab/">Camel-snake-kebab</a> is a nice little convenience. Reagent does a great job of converting component parameters from kebab-case to camelCase for wrapped React components. There are some spots where you will want to use this library to do the same thing. In this example it is for the style sheets. In <code>src/main/new_project_name/app.cljs</code> you can see it's use to allow style properties to be referenced in camel case.</p><pre><code class="language-clojure">(def styles
   ^js (-&gt; {:surface
            {:flex           1
             :justify-content "center"}
