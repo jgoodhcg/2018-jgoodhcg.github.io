@@ -1,16 +1,16 @@
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Red Hat Display', sans-serif;
+    font-family: 'Alegreya';
 }
 
 body {
     color: #333;
     background-color: #f2f2f2;
-    font-family: 'Red Hat Display', sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 1500px;
 }
 
 .right {
@@ -30,7 +30,7 @@ body {
 
 .navbar-default .navbar-brand {
     color: #fff;
-    font-family: 'Red Hat Display', sans-serif;
+    font-family: 'Alegreya';
 }
 
 .navbar-default .navbar-brand:hover {
