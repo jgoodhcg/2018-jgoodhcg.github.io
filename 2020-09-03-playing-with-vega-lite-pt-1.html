@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <title>JGood: 📈 Vega-Lite Fun Pt-1</title>
     
-<meta name="keywords" content="clojure,cljs,clj,vega,oz,expo,vega-lite,shadow-cljs,create-kit,npm">
+<meta name="keywords" content="tick,clojure,cljs,clj,vega,oz,reagent,expo,vega-lite,time,shadow-cljs,create-kit,npm,memento mori">
 
 <meta name="description" content="I&#39;m obsessive about tracking personal metrics, and I want to make data visualizations. This is an initial attempt at exploring my own data, and Vega-Lite as a tool to visualize it. I&#39;m using Oz as a Vega-Lite wrapper because the setup was easy.Final product">
 
@@ -81,7 +81,7 @@
 </div>
 <div>
     
-    <p>I'm obsessive about tracking personal metrics, and I want to make data visualizations. This is an initial attempt at exploring my own data, and <a href="https://vega.github.io/vega-lite/">Vega-Lite</a> as a tool to visualize it. I'm using <a href="https://github.com/metasoarous/oz">Oz</a> as a Vega-Lite wrapper because the setup was <em>easy</em>.</p><h1>Final product</h1><p><img src="./../../img/playing-with-vega-lite/pt-1.png" alt="img" title="Final product" /></p><p>I'm not sure why February is missing. I think there was something weird about data exports in those months and the data dropped in processing.</p><p><a href="https://github.com/jgoodhcg/playground/blob/b752b1db752f8412b6f834070451150c44efa7f2/src/fat_secret.clj">Source code for this post</a></p><h1>Data</h1><p>A few years ago I used Myfitnesspal. I found out after a year of tracking that it only had aggregate meal time macros in its export. I switched to Fat Secret for that reason. It turns out that Fat Secret has more precise data but it is difficult to parse. I've since moved on to <a href="https://cronometer.com/?utm_source=jgood-blog&amp;utm_medium=vega-lite-pt-1-post&amp;utm_campaign=justin-showing-up-in-your-analytics">Cronometer</a>. It's data export is a perfectly parsable csv. However, I have over a year's worth of daily nutritional info in Fat Secret so this post is about getting that into a graph.</p><h2>Example of an export <em>csv</em> document from Fat Secret:</h2><pre><code>#-------------------------------------------
+    <p>I'm obsessive about tracking personal metrics, and I want to make data visualizations. This is an initial attempt at exploring my own data, and <a href="https://vega.github.io/vega-lite/">Vega-Lite</a> as a tool to visualize it. I'm using <a href="https://github.com/metasoarous/oz">Oz</a> as a Vega-Lite wrapper because the setup was <em>easy</em>.</p><h2>Final product</h2><p><img src="./../../img/playing-with-vega-lite/pt-1.png" alt="img" title="Final product" /></p><p>I'm not sure why February is missing. I think there was something weird about data exports in those months and the data dropped in processing.</p><p><a href="https://github.com/jgoodhcg/playground/blob/b752b1db752f8412b6f834070451150c44efa7f2/src/fat_secret.clj">Source code for this post</a></p><h2>Data</h2><p>A few years ago I used Myfitnesspal. I found out after a year of tracking that it only had aggregate meal time macros in its export. I switched to Fat Secret for that reason. It turns out that Fat Secret has more precise data but it is difficult to parse. I've since moved on to <a href="https://cronometer.com/?utm_source=jgood-blog&amp;utm_medium=vega-lite-pt-1-post&amp;utm_campaign=justin-showing-up-in-your-analytics">Cronometer</a>. It's data export is a perfectly parsable csv. However, I have over a year's worth of daily nutritional info in Fat Secret so this post is about getting that into a graph.</p><h3>Example of an export <em>csv</em> document from Fat Secret:</h3><pre><code>#-------------------------------------------
 # Food Diary Report - Detailed Report,"Tuesday, May 1, 2018","Thursday, May 31, 2018"
 #-------------------------------------------
 
@@ -149,7 +149,7 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
 "   2  x 1 oz, 56 g"
 </code></pre><p>The measurement above shows <code>"</code>'s wrapping, an <code>x</code> to indicate quantity of measurement, and a comma with a standardized measurement after it. Another example of a meal item has none of those things.</p><pre><code>  Wonka Nerd Rope,90,0,0,22,0,20,0,0,0,0
    1 rope
-</code></pre><p>After the last meal item of Breakfast there will be the next meal heading for Lunch. The same happens for meal headings and days.</p><h2>Transformation</h2><p>When considering how to parse this I found two things that looked promising. The first was <a href="https://juxt.pro/blog/parsing-with-clojure-spec">from juxt</a> and used <code>spec</code>. The second was <a href="https://github.com/Engelberg/instaparse">Instaparse</a>, based on <code>context free grammars</code>. I went with spec 🤷. In hindsight I should have taken the time to learn Instaparse.</p><h3>Making a spec for each type of heading</h3><pre><code class="language-clojure">(ns fat-secret
+</code></pre><p>After the last meal item of Breakfast there will be the next meal heading for Lunch. The same happens for meal headings and days.</p><h3>Transformation</h3><p>When considering how to parse this I found two things that looked promising. The first was <a href="https://juxt.pro/blog/parsing-with-clojure-spec">from juxt</a> and used <code>spec</code>. The second was <a href="https://github.com/Engelberg/instaparse">Instaparse</a>, based on <code>context free grammars</code>. I went with spec 🤷. In hindsight I should have taken the time to learn Instaparse.</p><h4>Making a spec for each type of heading</h4><pre><code class="language-clojure">(ns fat-secret
   (:require [clojure.spec.alpha :as s]))
 
 (s/def ::day-heading
@@ -200,7 +200,7 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
     :sod (s/? blank-or-float?)
     :chol (s/? blank-or-float?)
     :potassium (s/? blank-or-float?)))
-</code></pre><p>These specs all use <code>s/cat</code> to take a collection of values and turn them into a keyed map. The <code>s/?</code> in each keyed predicate means that it matches zero or 1. In practice this means that when the spec finds a value for that key it moves on to the next key.</p><h3>Getting the files ready for processing</h3><pre><code class="language-clojure">(def files (-&gt;&gt; "/absolute/path/to/files"
+</code></pre><p>These specs all use <code>s/cat</code> to take a collection of values and turn them into a keyed map. The <code>s/?</code> in each keyed predicate means that it matches zero or 1. In practice this means that when the spec finds a value for that key it moves on to the next key.</p><h4>Getting the files ready for processing</h4><pre><code class="language-clojure">(def files (-&gt;&gt; "/absolute/path/to/files"
                 (clojure.java.io/file)
                 (file-seq)
                 (filter #(.isFile %))
@@ -208,7 +208,7 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
                           (.toPath)
                           (.toString)))
                 (filter #(str/includes? % "eml"))))
-</code></pre><p>This snippet iterates over everything in a directory, checking that it is a file, converting it's path to a string, and then looking for a specific file format. The result is a collection of absolute file paths as strings.</p><h3>Turning the file paths into a piece of data to process</h3><pre><code class="language-clojure">(defn load-lines [file]
+</code></pre><p>This snippet iterates over everything in a directory, checking that it is a file, converting it's path to a string, and then looking for a specific file format. The result is a collection of absolute file paths as strings.</p><h4>Turning the file paths into a piece of data to process</h4><pre><code class="language-clojure">(defn load-lines [file]
   (with-open [rdr (clojure.java.io/reader file)]
     (into [] (line-seq rdr))))
 
@@ -217,7 +217,7 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
              (into [] (map load-lines))
              (flatten)
              (transform-lines))))
-</code></pre><p>This snippet takes the collection of file paths and maps over them with a reader that puts all of their lines into a collection. Those collections load into another collection. The result is a nested collection of every line in all the files. <code>flatten</code> turns it into a single collection of every line in all the files.</p><h3>Transforming the lines</h3><pre><code class="language-clojure">(defn transform-lines [lines]
+</code></pre><p>This snippet takes the collection of file paths and maps over them with a reader that puts all of their lines into a collection. Those collections load into another collection. The result is a nested collection of every line in all the files. <code>flatten</code> turns it into a single collection of every line in all the files.</p><h4>Transforming the lines</h4><pre><code class="language-clojure">(defn transform-lines [lines]
   (-&gt;&gt; lines
        (reduce
          (fn [data line]
@@ -310,7 +310,7 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
                             [sp/LAST :meals prev-meal-keyword :items]
                             (fn [meal-items]
                               (conj meal-items maybe-item-data))))
-</code></pre><p><code>sp/transform</code> is a <a href="https://github.com/redplanetlabs/specter">specter</a> function that uses the path to update a piece of nested data. You can see the use of <code>prev-meal-keyword</code> from the atom to find the right meal to place the meal item under. The day is easy to know without any state from the atom because it is always the <em>last</em> day.</p><h3>Visualization</h3><p>Visualizing with Vega-Lite is all declarative.</p><p>With <code>Oz</code> just call <code>start-server!</code> and then <code>view!</code> with a map of data.</p><pre><code class="language-clojure">(oz/start-server!)
+</code></pre><p><code>sp/transform</code> is a <a href="https://github.com/redplanetlabs/specter">specter</a> function that uses the path to update a piece of nested data. You can see the use of <code>prev-meal-keyword</code> from the atom to find the right meal to place the meal item under. The day is easy to know without any state from the atom because it is always the <em>last</em> day.</p><h2>Visualization</h2><p>Visualizing with Vega-Lite is all declarative.</p><p>With <code>Oz</code> just call <code>start-server!</code> and then <code>view!</code> with a map of data.</p><pre><code class="language-clojure">(oz/start-server!)
 ...
 
 (def calories-line-plot
@@ -370,6 +370,8 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
 
     <div id="prev-next">
         
+        <a href="/2020-10-25-memento-mori">&laquo; 💀 Memento Mori Life Chart Experiment</a>
+        
         
         <a class="right" href="/2020-04-05-stealing-with-deps">💎 Stealing with deps.edn &raquo;</a>
         
@@ -406,11 +408,11 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
                     <h3>Recent Posts</h3>
                     <ul>
                         
+                        <li><a href="/2020-10-25-memento-mori">💀 Memento Mori Life Chart Experiment</a></li>
+                        
                         <li><a href="/2020-09-03-playing-with-vega-lite-pt-1">📈 Vega-Lite Fun Pt-1</a></li>
                         
                         <li><a href="/2020-04-05-stealing-with-deps">💎 Stealing with deps.edn</a></li>
-                        
-                        <li><a href="/2020-01-26-expo-shadow-cljs-starter">A template for Expo apps with Shadow CLJS</a></li>
                         
                     </ul>
                 </div>
@@ -419,6 +421,8 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
                 <div id="tags">
                     <h3>Tags</h3>
                     <ul>
+                        
+                        <li><a href="/tags/tick">tick</a></li>
                         
                         <li><a href="/tags/clojure">clojure</a></li>
                         
@@ -430,15 +434,21 @@ Date,Cals ( kcal),Fat( g),Sat( g),Carbs( g),Fiber( g),Sugar( g),Prot( g),Sod( mg
                         
                         <li><a href="/tags/oz">oz</a></li>
                         
+                        <li><a href="/tags/reagent">reagent</a></li>
+                        
                         <li><a href="/tags/expo">expo</a></li>
                         
                         <li><a href="/tags/vega-lite">vega-lite</a></li>
+                        
+                        <li><a href="/tags/time">time</a></li>
                         
                         <li><a href="/tags/shadow-cljs">shadow-cljs</a></li>
                         
                         <li><a href="/tags/create-kit">create-kit</a></li>
                         
                         <li><a href="/tags/npm">npm</a></li>
+                        
+                        <li><a href="/tags/memento mori">memento mori</a></li>
                         
                     </ul>
                 </div>
