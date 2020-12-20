@@ -2,19 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>JGood: 💎 Stealing with deps.edn</title>
+    <title>JGood: 📽️ Video Production Notes</title>
     
 <meta name="keywords" content="tick,react-native,clojure,cljs,clj,vega,oz,reagent,expo,vega-lite,time,shadow-cljs,create-kit,video-production,notes,npm,react-native-gesture-handler,memento mori">
 
-<meta name="description" content="This builds on a previous post about a template repo I made. The goal was to make it easier for me and others to start a project on this stack. The ideal state wasn&#39;t a repo that needs manual setup. The ideal state is one command that generates a ready to run project. This post will describe how I made an npm module called create-expo-cljs-app.The Target">
+<meta name="description" content="WhyI made a goal to write 3 blog posts before 2020-12-21 and this is the third. It&#39;s a note compilation from watching videos on youtube about video production. Everybody is starting a youtube channel so I&#39;ve shared this multiple times. I figured it would make a nice post.">
 
-<meta property="og:description" content="This builds on a previous post about a template repo I made. The goal was to make it easier for me and others to start a project on this stack. The ideal state wasn&#39;t a repo that needs manual setup. The ideal state is one command that generates a ready to run project. This post will describe how I made an npm module called create-expo-cljs-app.The Target">
+<meta property="og:description" content="WhyI made a goal to write 3 blog posts before 2020-12-21 and this is the third. It&#39;s a note compilation from watching videos on youtube about video production. Everybody is starting a youtube channel so I&#39;ve shared this multiple times. I figured it would make a nice post.">
 
-<meta property="og:url" content="https://jgood.io/2020-04-05-stealing-with-deps" />
-<meta property="og:title" content="💎 Stealing with deps.edn" />
+<meta property="og:url" content="https://jgood.io/2020-12-20-video-production-notes" />
+<meta property="og:title" content="📽️ Video Production Notes" />
 <meta property="og:type" content="article" />
 
-    <link rel="canonical" href="https://jgood.io/2020-04-05-stealing-with-deps">
+    <link rel="canonical" href="https://jgood.io/2020-12-20-video-production-notes">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="//fonts.googleapis.com/css?family=Alegreya:400italic,700italic,400,700" rel="stylesheet"
           type="text/css">
@@ -74,61 +74,34 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">April 5, 2020</div>
+        <div class="col-lg-6">December 20, 2020</div>
         
     </div>
-    <h2>💎 Stealing with deps.edn</h2>
+    <h2>📽️ Video Production Notes</h2>
 </div>
 <div>
     
-    <p>This builds on <a href="/posts/2020-01-26-expo-shadow-cljs-starter">a previous post</a> about a template repo I made. The goal was to make it easier for me and others to start a project on this stack. The ideal state wasn't a repo that needs manual setup. The ideal state is one command that generates a ready to run project. This post will describe how I made an npm module called <a href="https://www.npmjs.com/package/create-expo-cljs-app">create-expo-cljs-app</a>.</p><h2>The Target</h2><p>First I found an example to work from. <a href="https://github.com/filipesilva/create-cljs-app">Create CLJS App</a> is exactly what I wanted to make for expo cljs projects. Once I grokked the codebase I was set. Clojure open source projects are the only projects I've ever been able to dive into an understand without someone guiding me through the codebase. I think that's a merit of clojure itself -- it's easy to read.</p><p>I'm going to refer to the concept this project relies on as an <strong>npm create kit</strong>. An npm create kit seems to be a convention for creating npm modules that generate projects.</p><p>To start the project must be named <code>create-&lt;something&gt;</code>. Then it needs a couple of specific things in its <code>package.json</code>. Most important is a <code>bin</code> key with a script that is keyed to the same name as the project. Like so:</p><pre><code>  "bin": {
-    "create-cljs-app": "./bin/create-cljs-app.js"
-  },
-</code></pre><p>A <code>files</code> key scopes any other necessary files in the create kit. Like so:</p><pre><code>  "files": [
-    "bin",
-    "dist",
-    "template"
-   ],
-</code></pre><p>This is all the create kit convention needs to run your project given any of the commands for <code>npx</code> <code>yarn</code> or <code>npm</code>. <a href="https://github.com/filipesilva/create-cljs-app#npx">Here are some examples of those commands</a>.</p><h2>The Heist</h2><p>It's up to the create kit to actually generate the project in some way. The <code>create-cljs-app</code> project has a simple entry bin script.</p><pre><code>const { create } = require('../dist/lib');
-const [, , projectPath = ''] = process.argv;
-return create(process.cwd(), projectPath);
-</code></pre><p>It calls one <code>create</code> function in a cljs namespace that does everything. Some things include checking for dependencies and writing messages to the console.
-It took awhile but I realized that I could include this repo with <a href="https://clojure.org/guides/deps_and_cli#_using_git_libraries">deps.edn</a> and reuse most of the code.</p><p>The first change was to add <code>deps.edn</code> to the original create kit. That <a href="https://shadow-cljs.github.io/docs/UsersGuide.html#deps-edn">was easy with shadow-cljs</a>.</p><p>Then I extended that <a href="https://github.com/jgoodhcg/create-cljs-app/blob/extendable-ish/src/create_cljs_app/lib.cljs#L20">create function</a> to take a map of optional <code>options</code>.You can see those changes on <a href="https://github.com/jgoodhcg/create-cljs-app/commits/extendable-ish">this branch</a> of my fork.</p><p>My create kit project <a href="https://github.com/jgoodhcg/create-expo-cljs-app/blob/master/deps.edn#L3">includes the create-cljs-app</a> as a dependency. It has basically the same bin entrypoint:</p><pre><code>const { create } = require('../dist/lib');
-const [, , projectPath = ''] = process.argv;
-return create(process.cwd(), projectPath);
-</code></pre><p>The only cljs I needed to make a new project was some functions to check for dependencies and a custom message to display at the end.</p><pre><code>(defn create [cwd path]
-  (cca-lib/create cwd path {:done-msg       done-msg
-                            :get-commands   get-commands
-                            :has-extras?    (fn [] (has-binary-on-PATH? "expo"))
-                            :extras-warning expo-cli-warning}))
-
-(def exports #js {:create create})
-</code></pre><p>The <a href="https://github.com/jgoodhcg/create-expo-cljs-app/blob/master/src/create_expo_cljs_app/lib.cljs">whole file</a> is only about 50 lines.</p><h2>Loose Ends</h2><p>One <em>gotcha</em> I ran into was needing to <a href="https://github.com/jgoodhcg/create-expo-cljs-app/blob/master/package.json#L24-L28">install the Javacsript dependencies</a> of the <a href="https://github.com/jgoodhcg/create-cljs-app/blob/5efc7915dcb0d88a744e5d68b0f178cfc7142b09/package.json#L47-L51">project I was including</a>. It doesn't seem like <code>deps.edn</code> can manage javascript dependencies.</p><p>Locally I tested with something like:</p><pre><code>node ~/create-expo-cljs-app/bin/create-expo-cljs-app.js my-app
-</code></pre><p>Once it was working all I had to do was setup an npm account <a href="https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages">and publish</a>.</p><p>Now creating a project is as simple as <code>yarn create expo-cljs-app my-app</code>. I wish this had existed when I started trying to make my first expo cljs app.</p>
+    <h2>Why</h2><p>I made a goal to write 3 blog posts before 2020-12-21 and this is the third. It's a note compilation from watching videos on youtube about video production. Everybody is starting a youtube channel so I've shared this multiple times. I figured it would make a nice post.</p><h2>Notes</h2><ul><li><a href="https://youtu.be/vIwKUTcW4l4?t=202">Create Depth</a></li><li><a href="https://youtu.be/vIwKUTcW4l4?t=338">Frame a person</a> center or in a third
+<ul><li>Keep the body line on the right or left third and the eyes in the top third</li></ul></li><li><a href="https://youtu.be/vIwKUTcW4l4?t=393">Keep it eye level</a></li><li><a href="https://youtu.be/vIwKUTcW4l4?t=430">Big soft light</a> and keep it on a side (45 deg) and above eye line for more <strong>cinematic</strong> shadows
+<ul><li>Also called <a href="https://youtu.be/_hKkiWCak54?t=272">Rembrandt lighting</a></li></ul></li><li><a href="https://youtu.be/vIwKUTcW4l4?t=674">Shutter speed twice the framerate</a></li><li><a href="https://youtu.be/vIwKUTcW4l4?t=702">Keep aperature low</a> for shallow depth of field effect</li><li><a href="https://youtu.be/_hKkiWCak54?t=438">Position the interviewer so that the subject looks at the right spot</a></li><li><a href="https://youtu.be/_hKkiWCak54?t=856">Use akward silence to encourage the subject to expand on answers</a></li><li><a href="https://youtu.be/t5k7feqZUD0?t=137">The Whip</a> Transition is possibly the most popular</li><li><a href="https://www.youtube.com/watch?v=Gay-oYR-Y8I">How to make ugly locations cinematic</a><ul><li>Drop the angle below eye level</li><li>Shoot in the morning or at night</li><li>Remove indoor lights and add haze</li><li>Swap lenses to blur background or include more of it</li><li>Keep the camera moving</li><li>Add foreground elements to keep movement dynamic</li></ul></li><li><a href="https://youtu.be/FivHoU8T5zw">Reverse key lighting</a></li><li><a href="https://youtu.be/ZmFsSSUSxSc">Cove lighting</a></li></ul>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/cljs">cljs</a>
+    <a href="/tags/video-production">video-production</a>
     
-    <a href="/tags/expo">expo</a>
-    
-    <a href="/tags/shadow-cljs">shadow-cljs</a>
-    
-    <a href="/tags/create-kit">create-kit</a>
-    
-    <a href="/tags/npm">npm</a>
+    <a href="/tags/notes">notes</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/2020-09-03-playing-with-vega-lite-pt-1">&laquo; 📈 Vega-Lite Fun Pt-1</a>
+        <a href="/2020-12-20-failed-gesture-experiment">&laquo; ❌ Failed Gesture Experiment</a>
         
         
-        <a class="right" href="/2020-01-26-expo-shadow-cljs-starter">A template for Expo apps with Shadow CLJS &raquo;</a>
+        <a class="right" href="/2020-10-25-memento-mori">💀 Memento Mori Life Chart Experiment &raquo;</a>
         
     </div>
 
